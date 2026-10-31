@@ -1,0 +1,41 @@
+# --- IDE / OS ---
+.idea/
+.vscode/
+.DS_Store
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv*/
+.env
+.env.*
+*.egg-info/
+build/
+dist/
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Local Spark (unit tests) ---
+spark-warehouse/
+metastore_db/
+derby.log
+*.log
+
+# --- Databricks (bundle local state, CLI config) ---
+.databricks/
+.databrickscfg
+
+# --- Secrets: never commit ---
+*.pem
+*.key
+*.p12
+secrets/
+credentials*
+
+# --- Local Airflow (added later) ---
+airflow/logs/
+airflow/*.db
