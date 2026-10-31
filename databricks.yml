@@ -1,0 +1,10 @@
+bundle:
+  name: ride-sharing-lakehouse
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-23cc8a89-ee23.cloud.databricks.com
+      profile: rs-dev
