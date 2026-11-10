@@ -6,5 +6,5 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://dbc-23cc8a89-ee23.cloud.databricks.com
+      host: https://dbc-837aeb53-7fb7.cloud.databricks.com
       profile: rs-dev
