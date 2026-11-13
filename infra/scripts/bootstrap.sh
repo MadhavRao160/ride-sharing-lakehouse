@@ -57,7 +57,8 @@ MSK_POLICY=$(cat <<EOF
       "Action": [
         "kafka-cluster:Connect",
         "kafka-cluster:DescribeCluster",
-        "kafka-cluster:WriteDataIdempotently"
+        "kafka-cluster:WriteDataIdempotently",
+        "kafka-cluster:DescribeClusterDynamicConfiguration"
       ],
       "Resource": "arn:aws:kafka:${AWS_REGION}:${EXPECTED_ACCOUNT}:cluster/rs-msk/*"
     },
@@ -69,7 +70,8 @@ MSK_POLICY=$(cat <<EOF
         "kafka-cluster:WriteData",
         "kafka-cluster:ReadData",
         "kafka-cluster:AlterGroup",
-        "kafka-cluster:DescribeGroup"
+        "kafka-cluster:DescribeGroup",
+        "kafka-cluster:DeleteGroup"
       ],
       "Resource": [
         "arn:aws:kafka:${AWS_REGION}:${EXPECTED_ACCOUNT}:topic/rs-msk/*",
