@@ -46,4 +46,42 @@ aws iam put-role-policy --role-name "$SIM_ROLE" \
   --policy-name rs-sim-artifacts --policy-document "$POLICY"
 echo "   applied"
 
+echo "== Inline policy rs-sim-msk on role $SIM_ROLE (MSK data access, as code)"
+MSK_POLICY=$(cat <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ClusterAccess",
+      "Effect": "Allow",
+      "Action": [
+        "kafka-cluster:Connect",
+        "kafka-cluster:DescribeCluster",
+        "kafka-cluster:WriteDataIdempotently"
+      ],
+      "Resource": "arn:aws:kafka:${AWS_REGION}:${EXPECTED_ACCOUNT}:cluster/rs-msk/*"
+    },
+    {
+      "Sid": "TopicsAndGroups",
+      "Effect": "Allow",
+      "Action": [
+        "kafka-cluster:*Topic*",
+        "kafka-cluster:WriteData",
+        "kafka-cluster:ReadData",
+        "kafka-cluster:AlterGroup",
+        "kafka-cluster:DescribeGroup"
+      ],
+      "Resource": [
+        "arn:aws:kafka:${AWS_REGION}:${EXPECTED_ACCOUNT}:topic/rs-msk/*",
+        "arn:aws:kafka:${AWS_REGION}:${EXPECTED_ACCOUNT}:group/rs-msk/*"
+      ]
+    }
+  ]
+}
+EOF
+)
+aws iam put-role-policy --role-name "$SIM_ROLE" \
+  --policy-name rs-sim-msk --policy-document "$MSK_POLICY"
+echo "   applied"
+
 echo "Bootstrap done."

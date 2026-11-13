@@ -1,0 +1,35 @@
+{
+  "type": "record",
+  "name": "RideEvent",
+  "namespace": "com.rs.events",
+  "doc": "Backend ride lifecycle event. Kafka topic ride_events, key = request_id. One schema, 9 types; type-specific fields are optional and checked by silver DQ.",
+  "fields": [
+    {"name": "event_id",   "type": {"type": "string", "logicalType": "uuid"}},
+    {"name": "event_type", "type": {"type": "enum", "name": "RideEventType",
+       "symbols": ["UNKNOWN", "RIDE_REQUESTED", "OFFER_SENT", "OFFER_REJECTED", "OFFER_EXPIRED",
+                   "RIDE_ACCEPTED", "DRIVER_ARRIVED", "TRIP_STARTED", "TRIP_COMPLETED", "RIDE_CANCELLED"],
+       "default": "UNKNOWN"}},
+    {"name": "request_id", "type": {"type": "string", "logicalType": "uuid"},
+     "doc": "Created at request; every event of one ride shares it"},
+    {"name": "event_time", "type": {"type": "long", "logicalType": "timestamp-millis"}},
+
+    {"name": "rider_id",      "type": ["null", "long"],   "default": null, "doc": "ride_requested"},
+    {"name": "pickup_lat",    "type": ["null", "double"], "default": null, "doc": "ride_requested"},
+    {"name": "pickup_lon",    "type": ["null", "double"], "default": null, "doc": "ride_requested"},
+    {"name": "dropoff_lat",   "type": ["null", "double"], "default": null, "doc": "ride_requested"},
+    {"name": "dropoff_lon",   "type": ["null", "double"], "default": null, "doc": "ride_requested"},
+    {"name": "payment_method", "type": ["null", {"type": "enum", "name": "PaymentMethod",
+       "symbols": ["UNKNOWN", "CARD", "CASH", "WALLET"], "default": "UNKNOWN"}],
+     "default": null, "doc": "ride_requested"},
+    {"name": "surge_multiplier_shown", "type": ["null", "double"], "default": null,
+     "doc": "ride_requested; stamped by backend from pricing service (fixed 1.0 until Flow 1.D)"},
+
+    {"name": "driver_id",     "type": ["null", "long"],   "default": null, "doc": "offers onward"},
+    {"name": "trip_id",       "type": ["null", "long"],   "default": null, "doc": "created on accept"},
+
+    {"name": "cancelled_by",  "type": ["null", {"type": "enum", "name": "CancelledBy",
+       "symbols": ["UNKNOWN", "RIDER", "DRIVER", "SYSTEM"], "default": "UNKNOWN"}],
+     "default": null, "doc": "ride_cancelled"},
+    {"name": "cancel_reason", "type": ["null", "string"], "default": null, "doc": "ride_cancelled"}
+  ]
+}

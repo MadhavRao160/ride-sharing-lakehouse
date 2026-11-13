@@ -1,0 +1,2 @@
+confluent-kafka[avro]>=2.6,<3
+aws-msk-iam-sasl-signer-python>=1.0.1,<2
