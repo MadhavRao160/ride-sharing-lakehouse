@@ -1,0 +1,21 @@
+{
+  "type": "record",
+  "name": "GpsPing",
+  "namespace": "com.rs.events",
+  "doc": "Driver app GPS ping, every ~4s per driver. Kafka topic gps_pings, key = driver_id.",
+  "fields": [
+    {"name": "event_id",      "type": {"type": "string", "logicalType": "uuid"},
+     "doc": "Created on the phone; dedup key in silver"},
+    {"name": "driver_id",     "type": "long"},
+    {"name": "event_time",    "type": {"type": "long", "logicalType": "timestamp-millis"},
+     "doc": "When the phone took the reading, UTC"},
+    {"name": "driver_status", "type": {"type": "enum", "name": "DriverStatus",
+       "symbols": ["UNKNOWN", "AVAILABLE", "EN_ROUTE_TO_PICKUP", "ON_TRIP", "OFFLINE"],
+       "default": "UNKNOWN"},
+     "doc": "Enum default lets old readers survive new symbols"},
+    {"name": "trip_id",       "type": ["null", "long"], "default": null,
+     "doc": "Null when the driver has no trip"},
+    {"name": "lat",           "type": "double"},
+    {"name": "lon",           "type": "double"}
+  ]
+}
