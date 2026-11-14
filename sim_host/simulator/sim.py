@@ -178,6 +178,7 @@ class Simulator:
             "enable.idempotence": True,       # broker drops producer retries' duplicates
             "linger.ms": 50,
             "compression.type": "lz4",
+            "partitioner": "murmur2_random",  # same key -> same partition as Java producers
         }))
         self.producer.poll(1)                 # triggers the first IAM token
         log.info("drivers=%d (online=%d) req_rate=%.2f/s dup=%.3f late=%.3f",
