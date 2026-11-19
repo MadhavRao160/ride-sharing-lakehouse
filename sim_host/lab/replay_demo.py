@@ -6,13 +6,14 @@ Steps (run one at a time, look at Kafka UI -> Consumers -> lab7 in between):
   replay          read from the bookmark to the end, report what came back and how fast
 The group has no live members between steps, which a reset requires.
 Usage: replay_demo.py fill | reset <minutes> | replay   [group=lab7]"""
+import os
 import sys
 import time
 from datetime import datetime, timezone
 
 from confluent_kafka import Consumer, TopicPartition
 
-sys.path.insert(0, "/opt/rs/sim_host/simulator")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "simulator"))
 from kafka_common import kafka_conf  # noqa: E402
 
 TOPIC = "gps_pings"

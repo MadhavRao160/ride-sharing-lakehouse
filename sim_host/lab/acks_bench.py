@@ -13,7 +13,7 @@ import time
 from confluent_kafka import Producer
 from confluent_kafka.admin import AdminClient, NewTopic
 
-sys.path.insert(0, "/opt/rs/sim_host/simulator")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "simulator"))
 from kafka_common import kafka_conf  # noqa: E402
 
 TOPIC = "lab_acks"

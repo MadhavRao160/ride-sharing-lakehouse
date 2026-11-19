@@ -3,6 +3,7 @@
 Reads the newest N messages from every partition of a topic, decodes them,
 and finds event_ids that appear more than once.
 Usage: dup_check.py [topic=gps_pings] [per_partition=20000]"""
+import os
 import sys
 from collections import defaultdict
 
@@ -11,7 +12,7 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.serialization import MessageField, SerializationContext
 
-sys.path.insert(0, "/opt/rs/sim_host/simulator")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "simulator"))
 from kafka_common import REGISTRY_URL, kafka_conf  # noqa: E402
 
 topic = sys.argv[1] if len(sys.argv) > 1 else "gps_pings"

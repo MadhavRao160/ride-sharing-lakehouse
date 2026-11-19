@@ -14,7 +14,7 @@ import time
 import uuid
 from collections import Counter
 
-sys.path.insert(0, "/opt/rs/sim_host/simulator")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "simulator"))
 from kafka_common import kafka_conf  # noqa: E402
 
 TOPIC, PART, BATCH = "gps_pings", 0, 100

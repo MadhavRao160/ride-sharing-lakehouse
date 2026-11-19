@@ -4,8 +4,8 @@
 # For an existing subject it first asks the registry "is this change compatible?"
 # and stops on NO, so a breaking change never reaches producers.
 set -euo pipefail
-REG=http://localhost:8081
-DIR=/opt/rs/sim_host/schemas
+REG=${REGISTRY_URL:-http://localhost:8081}
+DIR=$(cd "$(dirname "$0")" && pwd)
 CT='Content-Type: application/vnd.schemaregistry.v1+json'
 
 shopt -s nullglob

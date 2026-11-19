@@ -10,6 +10,7 @@ gps_pings is never written to.
 Usage: serde_demo.py"""
 import io
 import json
+import os
 import sys
 import time
 import uuid
@@ -23,7 +24,7 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.serialization import MessageField, SerializationContext
 
-sys.path.insert(0, "/opt/rs/sim_host/simulator")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "simulator"))
 from kafka_common import REGISTRY_URL, kafka_conf, schema_str  # noqa: E402
 
 de = AvroDeserializer(SchemaRegistryClient({"url": REGISTRY_URL}))

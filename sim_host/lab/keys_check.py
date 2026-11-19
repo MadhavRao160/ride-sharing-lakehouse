@@ -5,6 +5,7 @@ Reads the newest N messages per partition and checks:
   2. which hash put it there? librdkafka CRC32 (our Python producer) vs Java's murmur2
   3. per key, does event_time always go up with the offset?
 Usage: keys_check.py [topic=gps_pings] [per_partition=20000] [last_minutes=0 (0 = all read)]"""
+import os
 import sys
 import time
 import zlib
@@ -15,7 +16,7 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.serialization import MessageField, SerializationContext
 
-sys.path.insert(0, "/opt/rs/sim_host/simulator")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "simulator"))
 from kafka_common import REGISTRY_URL, kafka_conf  # noqa: E402
 
 

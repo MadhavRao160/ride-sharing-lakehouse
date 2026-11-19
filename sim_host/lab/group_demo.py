@@ -6,11 +6,12 @@ At the end: messages read per consumer and per partition.
 New groups start at the newest offset, so lag starts near zero.
 Usage: group_demo.py <group> <consumers> [run_seconds=60] [stagger_s=8] [topic=gps_pings]"""
 import multiprocessing as mp
+import os
 import sys
 import time
 from collections import Counter
 
-sys.path.insert(0, "/opt/rs/sim_host/simulator")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "simulator"))
 from kafka_common import kafka_conf  # noqa: E402
 
 group = sys.argv[1]

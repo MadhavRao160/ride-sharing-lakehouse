@@ -1,0 +1,89 @@
+# Local Kafka lab: 3 brokers (KRaft), Schema Registry, Kafka UI. No AWS, no cost.
+# Same shape as MSK: 3 brokers, RF 3, min.insync 2, unclean leader election off.
+# From the Mac: brokers localhost:9092,9192,9292 | registry :8081 | UI http://localhost:8080
+x-broker: &broker
+  image: apache/kafka:3.9.1
+  restart: unless-stopped
+  environment: &broker-env
+    CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qg   # any 22-char base64 id, same on all 3
+    KAFKA_PROCESS_ROLES: broker,controller
+    KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:9093,2@kafka2:9093,3@kafka3:9093
+    KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+    KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,HOST:PLAINTEXT
+    KAFKA_LISTENERS: CONTROLLER://:9093,INTERNAL://:19092,HOST://:9092
+    KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+    KAFKA_MIN_INSYNC_REPLICAS: 2
+    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+    KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+    KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE: "false"
+    KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    KAFKA_HEAP_OPTS: -Xms512m -Xmx512m
+
+services:
+  kafka1:
+    <<: *broker
+    container_name: kafka1
+    hostname: kafka1
+    ports: ["9092:9092"]
+    environment:
+      <<: *broker-env
+      KAFKA_NODE_ID: 1
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,HOST://localhost:9092
+    volumes: [kafka1:/var/lib/kafka/data]
+
+  kafka2:
+    <<: *broker
+    container_name: kafka2
+    hostname: kafka2
+    ports: ["9192:9092"]
+    environment:
+      <<: *broker-env
+      KAFKA_NODE_ID: 2
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka2:19092,HOST://localhost:9192
+    volumes: [kafka2:/var/lib/kafka/data]
+
+  kafka3:
+    <<: *broker
+    container_name: kafka3
+    hostname: kafka3
+    ports: ["9292:9092"]
+    environment:
+      <<: *broker-env
+      KAFKA_NODE_ID: 3
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka3:19092,HOST://localhost:9292
+    volumes: [kafka3:/var/lib/kafka/data]
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.9.0
+    container_name: schema-registry
+    restart: unless-stopped
+    depends_on: [kafka1, kafka2, kafka3]
+    ports: ["8081:8081"]
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka1:19092,PLAINTEXT://kafka2:19092,PLAINTEXT://kafka3:19092
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 3
+      SCHEMA_REGISTRY_SCHEMA_COMPATIBILITY_LEVEL: backward
+      SCHEMA_REGISTRY_HEAP_OPTS: -Xms256m -Xmx384m
+
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:v1.2.0
+    container_name: kafka-ui
+    restart: unless-stopped
+    depends_on: [schema-registry]
+    ports: ["8080:8080"]
+    environment:
+      KAFKA_CLUSTERS_0_NAME: rs-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:19092,kafka2:19092,kafka3:19092
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+    mem_limit: 768m
+
+volumes:
+  kafka1:
+  kafka2:
+  kafka3:
